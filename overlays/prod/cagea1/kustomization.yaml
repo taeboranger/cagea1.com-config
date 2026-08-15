@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cagea1-prod
+resources:
+  - secret.yaml
+  - ../../../base/cagea1
+images:
+  - name: ghcr.io/taeboranger/cagea1.com
+    newName: ghcr.io/taeboranger/cagea1.com
+    newTag: main

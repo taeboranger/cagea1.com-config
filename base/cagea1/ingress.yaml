@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cagea1-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-clusterissuer"
+spec:
+  tls:
+    - hosts:
+        - cagea1.com
+        - www.cagea1.com
+      secretName: cagea1-tls
+  rules:
+    - host: cagea1.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cagea1-service
+                port:
+                  number: 80
+    - host: www.cagea1.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cagea1-service
+                port:
+                  number: 80
