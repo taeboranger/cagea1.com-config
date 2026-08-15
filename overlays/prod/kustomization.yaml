@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - letsencrypt-clusterissuer.yaml
-  - cloudflare-api-token.yaml
+  - vault-connection.yaml
+  - cert-manager-vault-static-secret.yaml
   - local-path-provisioner/
   - cagea1/

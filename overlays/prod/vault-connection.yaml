@@ -1,0 +1,7 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: cagea1-vault
+  namespace: vault-secrets-operator-system
+spec:
+  address: http://vault-external.vault.svc:8200
