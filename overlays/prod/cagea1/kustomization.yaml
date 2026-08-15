@@ -8,4 +8,4 @@ resources:
 images:
   - name: lightstone1/cagea1.com-prod
     newName: lightstone1/cagea1.com-prod
-    newTag: main
+    newTag: 661ba81f2983c953ea26592a28b3ec8beebb00f9
