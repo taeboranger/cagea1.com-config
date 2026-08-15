@@ -3,8 +3,9 @@ kind: Kustomization
 namespace: cagea1-prod
 resources:
   - secret.yaml
+  - persistent-volume-claim.yaml
   - ../../../base/cagea1
 images:
-  - name: ghcr.io/taeboranger/cagea1.com
-    newName: ghcr.io/taeboranger/cagea1.com
+  - name: lightstone1/cagea1.com-prod
+    newName: lightstone1/cagea1.com-prod
     newTag: main

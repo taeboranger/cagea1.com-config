@@ -14,8 +14,6 @@ spec:
       labels:
         app.kubernetes.io/name: cagea1
     spec:
-      imagePullSecrets:
-        - name: github-container-registry
       securityContext:
         fsGroup: 1001
       initContainers:
@@ -27,7 +25,7 @@ spec:
               mountPath: /data
       containers:
         - name: cagea1
-          image: ghcr.io/taeboranger/cagea1.com
+          image: lightstone1/cagea1.com-prod
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
