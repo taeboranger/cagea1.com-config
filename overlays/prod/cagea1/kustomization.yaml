@@ -7,4 +7,4 @@ resources:
 - ../../../base/cagea1
 images:
 - name: lightstone1/cagea1.com-prod
-  newTag: d9d6d6c09b74af316c0c71f7cf8f48fc644b2dd8
+  newTag: d3611630561b526605a85564ab356efffd7bb8d8
