@@ -1,0 +1,170 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "bunkerweb"
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "bunkerweb"
+      }
+    },
+    "strategy": {
+      "type": "Recreate"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "bunkerweb"
+        }
+      },
+      "spec": {
+        "automountServiceAccountToken": false,
+        "containers": [
+          {
+            "name": "bunkerweb",
+            "imagePullPolicy": "IfNotPresent",
+            "image": "docker.io/bunkerity/bunkerweb-all-in-one:1.6.17@sha256:af2f9ab5e89b2bb3ab344f203ad6b16285d73f31cbb3ebc2e17680043e76cb9b",
+            "envFrom": [
+              {
+                "configMapRef": {
+                  "name": "bunkerweb-common"
+                }
+              }
+            ],
+            "env": [
+              {
+                "name": "SERVER_NAME",
+                "value": "cagea1.com bunkerweb.cagea1.com"
+              },
+              {
+                "name": "SERVICE_UI",
+                "value": "yes"
+              },
+              {
+                "name": "UI_WIZARD",
+                "value": "no"
+              },
+              {
+                "name": "UI_FORWARDED_ALLOW_IPS",
+                "value": "127.0.0.1,::1"
+              },
+              {
+                "name": "OVERRIDE_ADMIN_CREDS",
+                "value": "no"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_USE_TEMPLATE",
+                "value": "ui"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_USE_REVERSE_PROXY",
+                "value": "yes"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_REVERSE_PROXY_URL",
+                "value": "/"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_REVERSE_PROXY_HOST",
+                "value": "http://127.0.0.1:7000"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_GENERATE_SELF_SIGNED_SSL",
+                "value": "yes"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_AUTO_LETS_ENCRYPT",
+                "value": "no"
+              },
+              {
+                "name": "bunkerweb.cagea1.com_SECURITY_MODE",
+                "value": "block"
+              },
+              {
+                "name": "ADMIN_USERNAME",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "bunkerweb-runtime",
+                    "key": "ADMIN_USERNAME"
+                  }
+                }
+              },
+              {
+                "name": "ADMIN_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "bunkerweb-runtime",
+                    "key": "ADMIN_PASSWORD"
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "http",
+                "containerPort": 8080,
+                "protocol": "TCP"
+              },
+              {
+                "name": "https",
+                "containerPort": 8443,
+                "protocol": "TCP"
+              }
+            ],
+            "startupProbe": {
+              "tcpSocket": {
+                "port": "http"
+              },
+              "timeoutSeconds": 1,
+              "failureThreshold": 60,
+              "periodSeconds": 5
+            },
+            "readinessProbe": {
+              "tcpSocket": {
+                "port": "http"
+              },
+              "timeoutSeconds": 1,
+              "periodSeconds": 10
+            },
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "256Mi"
+              },
+              "limits": {
+                "memory": "1Gi"
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "data",
+                "mountPath": "/data"
+              },
+              {
+                "name": "audit",
+                "mountPath": "/var/log/bunkerweb"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "data",
+            "persistentVolumeClaim": {
+              "claimName": "bunkerweb-data"
+            }
+          },
+          {
+            "name": "audit",
+            "persistentVolumeClaim": {
+              "claimName": "bunkerweb-audit"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

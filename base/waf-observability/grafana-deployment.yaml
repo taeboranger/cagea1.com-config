@@ -1,0 +1,146 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "grafana"
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "grafana"
+      }
+    },
+    "strategy": {
+      "type": "Recreate"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "grafana"
+        }
+      },
+      "spec": {
+        "automountServiceAccountToken": false,
+        "securityContext": {
+          "runAsNonRoot": true,
+          "runAsUser": 472,
+          "runAsGroup": 472,
+          "fsGroup": 472,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "containers": [
+          {
+            "name": "grafana",
+            "imagePullPolicy": "IfNotPresent",
+            "image": "docker.io/grafana/grafana:12.4.14@sha256:ae509d9ae8c1021ca32ec370a9ca975d40165eda9fccd1e1102d317ff8787cd7",
+            "env": [
+              {
+                "name": "GF_SERVER_ROOT_URL",
+                "value": "https://grafana.cagea1.com/"
+              },
+              {
+                "name": "GF_SECURITY_COOKIE_SECURE",
+                "value": "true"
+              },
+              {
+                "name": "GF_USERS_ALLOW_SIGN_UP",
+                "value": "false"
+              },
+              {
+                "name": "GF_AUTH_ANONYMOUS_ENABLED",
+                "value": "false"
+              },
+              {
+                "name": "GF_SECURITY_ADMIN_USER",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "grafana-runtime",
+                    "key": "GF_SECURITY_ADMIN_USER"
+                  }
+                }
+              },
+              {
+                "name": "GF_SECURITY_ADMIN_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "grafana-runtime",
+                    "key": "GF_SECURITY_ADMIN_PASSWORD"
+                  }
+                }
+              }
+            ],
+            "ports": [
+              {
+                "name": "http",
+                "containerPort": 3000,
+                "protocol": "TCP"
+              }
+            ],
+            "startupProbe": {
+              "httpGet": {
+                "port": "http",
+                "path": "/api/health"
+              },
+              "timeoutSeconds": 2,
+              "failureThreshold": 30,
+              "periodSeconds": 5
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "port": "http",
+                "path": "/api/health"
+              },
+              "timeoutSeconds": 2,
+              "periodSeconds": 10
+            },
+            "resources": {
+              "requests": {
+                "cpu": "100m",
+                "memory": "256Mi"
+              },
+              "limits": {
+                "memory": "768Mi"
+              }
+            },
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "capabilities": {
+                "drop": [
+                  "ALL"
+                ]
+              }
+            },
+            "volumeMounts": [
+              {
+                "name": "data",
+                "mountPath": "/var/lib/grafana"
+              },
+              {
+                "name": "datasources",
+                "mountPath": "/etc/grafana/provisioning/datasources",
+                "readOnly": true
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "data",
+            "persistentVolumeClaim": {
+              "claimName": "grafana-data"
+            }
+          },
+          {
+            "name": "datasources",
+            "configMap": {
+              "name": "grafana-datasources"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

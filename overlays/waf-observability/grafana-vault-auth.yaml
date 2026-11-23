@@ -1,0 +1,23 @@
+{
+  "apiVersion": "secrets.hashicorp.com/v1beta1",
+  "kind": "VaultAuth",
+  "metadata": {
+    "name": "grafana-vault-auth",
+    "annotations": {
+      "argocd.argoproj.io/sync-wave": "-1"
+    }
+  },
+  "spec": {
+    "vaultConnectionRef": "vault-secrets-operator-system/cagea1-vault",
+    "method": "kubernetes",
+    "mount": "kubernetes",
+    "kubernetes": {
+      "role": "waf-grafana",
+      "serviceAccount": "waf-grafana-vault",
+      "audiences": [
+        "vault"
+      ],
+      "tokenExpirationSeconds": 600
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "apiVersion": "networking.k8s.io/v1",
+  "kind": "Ingress",
+  "metadata": {
+    "name": "grafana",
+    "annotations": {}
+  },
+  "spec": {
+    "ingressClassName": "nginx",
+    "tls": [
+      {
+        "hosts": [
+          "grafana.cagea1.com"
+        ],
+        "secretName": "grafana-tls"
+      }
+    ],
+    "rules": [
+      {
+        "host": "grafana.cagea1.com",
+        "http": {
+          "paths": [
+            {
+              "path": "/",
+              "pathType": "Prefix",
+              "backend": {
+                "service": {
+                  "name": "grafana",
+                  "port": {
+                    "number": 3000
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

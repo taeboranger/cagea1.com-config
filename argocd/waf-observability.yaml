@@ -1,0 +1,26 @@
+{
+  "apiVersion": "argoproj.io/v1alpha1",
+  "kind": "Application",
+  "metadata": {
+    "name": "waf-observability",
+    "namespace": "argocd"
+  },
+  "spec": {
+    "project": "default",
+    "source": {
+      "repoURL": "git@github.com:taeboranger/cagea1.com-config.git",
+      "targetRevision": "main",
+      "path": "overlays/waf-observability"
+    },
+    "destination": {
+      "server": "https://kubernetes.default.svc",
+      "namespace": "waf-observability"
+    },
+    "syncPolicy": {
+      "automated": {
+        "prune": false,
+        "selfHeal": true
+      }
+    }
+  }
+}
